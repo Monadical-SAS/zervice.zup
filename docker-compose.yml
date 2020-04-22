@@ -1,0 +1,29 @@
+version: '2.3'
+
+services:
+    server:
+        build: '.'
+        entrypoint: ./monitor.py
+        ports:
+            - '2202:8000'
+        expose:
+            - 8000
+        networks:
+            - hera
+        labels:
+            hera.hostname: grape.zervice.io
+            hera.port: 8000
+        volumes:
+            - './:/opt/zervice.zup'
+            # - '/var/run/docker.sock:/var/run/docker.sock'
+
+    # cron:
+    #     image: 'python:3.8'
+    #     entrypoint: bash -c 'cd /opt/zervice.zup; pip install django; ./monitor.py'
+    #     volumes:
+    #         - './:/opt/zervice.zup'
+
+networks:
+    hera:
+        external:
+            name: hera

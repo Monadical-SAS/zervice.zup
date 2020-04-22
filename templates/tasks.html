@@ -1,0 +1,117 @@
+{% load humanize %}
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        padding: 0px;
+        margin: 0px;
+        font-family: 'Arial', sans-serif;
+    }
+    table {
+        margin: 0px;
+        border: 0px;
+        width: 100%;
+    }
+    .task.passing {
+        background-color: rgba(0, 255, 0, 0.1);
+    }
+    .task.failing {
+        background-color: rgba(255, 0, 0, 0.1);
+    }
+    .task.disabled {
+        opacity: 0.4;
+    }
+    .task-name {
+        width: 20%;
+        height: 33px;
+        font-weight: 600;
+        padding-left: 8px;
+        padding-right: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    .task-status {
+        width: 5%;
+        text-align: center;
+        font-weight: bold;
+    }
+    .task-results {
+        width: 45%;
+
+    }
+    .task-results .task-run {
+        display: inline-block;
+        min-width: 80px;
+    }
+    .task-results .task-run.passing {
+        color: green;
+    }
+    .task-results .task-run.failing {
+        color: red;
+    }
+    .task-description {
+        width: 30%;
+        padding-left: 10px;
+        font-weight: 200;
+        font-size: 0.8em;
+        opacity: 0.4;
+    }
+</style>
+<table>
+    {% comment %}
+        <thead style="background-color: #fafafa">
+            <th style="text-align: left; padding-left: 5px">Task</th>
+            <th>Status</th>
+            <th>Results</th>
+            <th>Description</th>
+            {# <th>Args</th> #}
+        </thead>
+    {% endcomment %}
+    <tbody>
+        {% for task_name, task in tasks.items %}
+            <tr class="task {% if task.runs.0.passing %}passing{% else %}failing{% endif %} {% if task.enabled|lower == 'false' or task.enabled == '0' %}disabled{% endif %}">
+                <td class="task-name">
+                    {{task_name}}
+                </b>
+
+                <td class="task-status" title="As of {{task.runs.0.finished}} ({{task.runs.0.finished|naturaltime}})">
+                    {% if task.runs.0.passing %}
+                        <i class="fa fa-check" style="color: green">√</i>
+                    {% else %}
+                        <i class="fa fa-cross" style="color: red">X</i>
+                    {% endif %}
+                </td>
+
+                <td class="task-results">
+                    <code title="Output of last 5 runs">
+                        &nbsp;
+                        {% for run in task.runs %}
+                            <span 
+                                class="task-run {% if run.passing %}passing{% else %}failing{% endif %}"
+                                style="opacity: calc(1/{{forloop.counter}})"
+                                title="{{run.end_time|naturaltime}}">   <!-- e.g. "3 seconds ago" -->
+                                {{run.result}}                          <!-- e.g. "5ms", "55%", etc.  -->
+                            </span>
+                            &nbsp;
+                        {% endfor %}
+                    </code>
+                    <code style="float: right; max-width: 400px; wrap: none; overflow: none; opacity: 0.4; padding-right: 10px">
+                        {{task.runs.0.stderr|default:task.runs.0.stdout}}
+                    </code>
+                </td>
+
+                <td class="task-description">
+                    {{task.description}}
+                </td>
+
+                {% comment %}
+                <td class="task-args">
+                    <code style="display: inline-block; width: 500px; height: 20px; overflow: hidden">
+                        {{task}}
+                    </code>
+                </td>
+                {% endcomment %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

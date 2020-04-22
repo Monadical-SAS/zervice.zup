@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <title>ZUP Uptime Monitor</title>
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            h1 {
+                margin: 20px;
+                font-weight: 200;
+            }
+            .host {
+                display: inline-block;
+                width: 100%;
+                max-width: 700px;
+                margin-left: 10px;
+                border: 1px solid #dfdfdf;
+                border-radius: 10px;
+                box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.02);
+                background-color: #fdfdfd;
+            }
+            .host h2 {
+                margin: 20px;
+                margin-bottom: 20px;
+                font-weight: 200;
+            }
+            .host iframe {
+                border: 0;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Hosts</h1>
+        <br/>
+        {% for hostname, host in hosts.items %}
+            <div class="host">
+                <h2>{{hostname}}</h2>
+                <iframe src="{{host.iframeurl}}" width="100%" height="412px"></iframe>
+            </div>
+        {% endfor %}
+    </body>
+</html>
