@@ -1,4 +1,4 @@
-# Zervice.ZUP Monitoring Service
+# Zervice.ZUP Simple Monitoring Service
 
 <img src="https://i.imgur.com/L8dvWpm.png">
 
