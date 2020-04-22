@@ -1,6 +1,8 @@
 # Zervice.ZUP Monitoring Service
 
-<!-- Wireframe layout
+## UI Wireframe
+
+```
 |- squash.zalad.io (1 failing, 14 passing)
 |  |
 |  |- √   ping       50ms    40ms   30ms      (rtt to the internet)             args: {rate: 10, host: '8.8.8.8', 'count': 1}
@@ -18,59 +20,28 @@
 |  |- ...
 | 
 |- ...
--->
+```
 
-
+## Project Layout
+```
 /opt/zervice.zup/
+    monitor.py
+    templates/
+        index.html
+        tasks.html
+    static/
+        ...
     etc/
         supervisor/
             zervice.zup.conf
         zup/
-            config.yml
+            zup.conf
                 
     data/
-        zup/
-            zup_db.sqlite3
-
-            scripts/
-                monadical-cloud.sh
-            checks/
-                monadical-cloud.yml
-                    monadical_cloud:
-                        test: 'scripts/monadical-cloud.sh'
-                        interval: 60s
-                        timeout: 30s
-
-                    
-
         logs/
             zup_server.log
             zup_cron.log
             check_ping.log
             check_ssh.log
             ...
-
-
-    docker-compose.yml
-        flask:
-            cmd: '/opt/zervice.zup/zup/server.py --config=/opt/zervice.zup/etc/zup/config.yml'
-            expose:
-                - 2202
-            networks:
-                - hera
-            labels:
-                hera.hostname: grape.zervice.io
-                hera.port: 2202
-            volumes:
-                - './etc/zup:/opt/zup/etc:ro'
-                - './data:/opt/zup/data'
-        cron:
-            cmd: '/opt/zervice.zup/zup/cron.py --config=/opt/zervice.zup/etc/zup/config.yml'
-            volumes:
-                - './etc/zup:/opt/zervice.zup/etc:ro'
-                - './data:/opt/zervice.zup/data'
-
-    zup/
-        server.py
-        cron.py
-        default_checks/
+```
