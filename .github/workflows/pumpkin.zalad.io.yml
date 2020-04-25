@@ -1,0 +1,81 @@
+name: 'pumpkin.zalad.io'
+
+on:
+  schedule:
+    - cron:  '*/2 * * * *'
+  push:
+    branches: [master]
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        interface:
+          - name: lan
+            host: 192.168.1.41
+          - name: vpn
+            host: 100.77.217.17
+          - name: wan
+            host: pumpkin.zalad.io
+          - name: argo
+            host: plex.zervice.io
+
+    env:
+      PING_COUNT: 5
+      PING_TIMEOUT: 5
+      PING_HOST: ${{ matrix.interface.host }}
+      PING_OUTPUT: ${{ format('ping_{0}_output.txt', matrix.interface.name) }}
+
+    outputs:
+      ping_pct_loss: ${{ steps.ping.outputs.ping_pct_loss }}
+      ping_avg_rtt: ${{ steps.ping.outputs.ping_avg_rtt }}
+
+    steps:
+      - name: Run ping test
+        id: sys_usage
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: PING_COUNT,PING_TIMEOUT,PING_HOST,PING_OUTPUT
+          script: |
+            bash -c '
+              ping \
+                  -c "$PING_COUNT" \
+                  -t "$PING_TIMEOUT" \
+                  "$PING_HOST" > "/tmp/$PING_OUTPUT"
+
+              OUTPUT="$(cat "/tmp/$PING_OUTPUT")"
+
+              PCT_LOSS="$(cat "/tmp/$PING_OUTPUT" | tail -n 2 | grep 'packet loss' | perl -pe 's/^.* ([0-9\.]+). packet loss.*$/$1/')"
+              echo "::set-output name=ping_pct_loss::$PCT_LOSS"
+
+              AVG_RTT="$(cat "/tmp/$PING_OUTPUT" | tail -n 2 | grep 'round-trip' | awk -F'/' '{print $4}')"
+              echo "::set-output name=ping_avg_rtt::$AVG_RTT"
+            '
+
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: ${{ format('/tmp/{0}', env.PING_OUTPUT) }}
+          target: ${{ env.PING_OUTPUT }}
+
+      - name: Print output for debugging
+        run: |
+          cat ${{ env.PING_OUTPUT }}
+        
+      - name: Upload output to GitHub
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: ${{ format('ping-{0}', matrix.interface.name) }}
+          path: ${{ env.PING_OUTPUT }}
