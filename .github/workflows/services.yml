@@ -109,3 +109,48 @@ jobs:
         with:
           name: ${{ format('curl-{0}', matrix.interface.name) }}
           path: curl_stats.txt
+
+  sys:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    continue-on-error: true
+
+    outputs:
+      cpu_usage: ${{ steps.sys_usage.outputs.cpu_usage }}
+      ram_usage: ${{ steps.sys_usage.outputs.ram_usage }}
+      swap_usage: ${{ steps.sys_usage.outputs.swap_usage }}
+      disk_usage: ${{ steps.sys_usage.outputs.disk_usage }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get CPU usage
+        id: sys_usage
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # CPU USage
+            uptime
+            | sed 's/.*: //'
+            | sed 's/, / /g'
+            | awk -v CORES=$(nproc) '{print ($1/CORES)*100}'
+            | xargs -I {} -n 1 echo "::set-output name=cpu_usage::{}"
+            # RAM Usage
+            free -t
+            | awk 'FNR == 2 {print $3/$2*100}'
+            | xargs -I {} -n 1 echo "::set-output name=ram_usage::{}"
+            # Swap Usage
+            free -t
+            | awk 'FNR == 3 {print $3/$2*100}'
+            | xargs -I {} -n 1 echo "::set-output name=swap_usage::{}"
+            # Disk Usage
+            df -H /
+            | sort -nrk5
+            | head -1
+            | awk '{{print $5}}'
+            | tr -d %
+            | xargs -I {} -n 1 echo "::set-output name=disk_usage::{}"
