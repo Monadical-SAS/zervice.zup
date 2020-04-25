@@ -48,14 +48,14 @@ jobs:
               ping \
                   -c ${{ env.PING_COUNT }} \
                   -t ${{ env.PING_TIMEOUT }} \
-                  ${{ env.PING_HOST }} > "/tmp/${{ env.PING_OUTPUT }}"
+                  ${{ env.PING_HOST }} > "${{ env.PING_OUTPUT }}"
 
-              cat "/tmp/${{ env.PING_OUTPUT }}"
+              cat "${{ env.PING_OUTPUT }}"
 
-              PCT_LOSS="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep "packet loss" | perl -pe \'s/^.* ([0-9\.]+). packet loss.*$/$1/\')"
+              PCT_LOSS="$(cat "${{ env.PING_OUTPUT }}" | tail -n 2 | grep "packet loss" | perl -pe \'s/^.* ([0-9\.]+). packet loss.*$/$1/\')"
               echo "::set-output name=ping_pct_loss::$PCT_LOSS"
 
-              AVG_RTT="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep "round-trip" | awk -F"/" \'{print $4}\')"
+              AVG_RTT="$(cat "${{ env.PING_OUTPUT }}" | tail -n 2 | grep "round-trip" | awk -F"/" \'{print $5}\')"
               echo "::set-output name=ping_avg_rtt::$AVG_RTT"
             '
 
@@ -66,9 +66,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: ${{ format('/tmp/{0}', env.PING_OUTPUT) }}
+          source: ${{ env.PING_OUTPUT }}
           target: .
-          strip_components: 1
 
       - name: Print output for debugging
         run: |
