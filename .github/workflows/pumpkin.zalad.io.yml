@@ -67,7 +67,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           source: ${{ format('/tmp/{0}', env.PING_OUTPUT) }}
-          target: ${{ env.PING_OUTPUT }}
+          target: .
+          strip_components: 1
 
       - name: Print output for debugging
         run: |
