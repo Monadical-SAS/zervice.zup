@@ -1,5 +1,4 @@
 name: 'zervice.plex'
-description: 'Plex, Radarr, Sonarr, Jackett, Transmission'
 
 on:
   schedule:
