@@ -43,20 +43,19 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          envs: PING_COUNT,PING_TIMEOUT,PING_HOST,PING_OUTPUT
           script: |
             bash -c '
               ping \
-                  -c "$PING_COUNT" \
-                  -t "$PING_TIMEOUT" \
-                  "$PING_HOST" > "/tmp/$PING_OUTPUT"
+                  -c ${{ env.PING_COUNT }} \
+                  -t ${{ env.PING_TIMEOUT }} \
+                  ${{ env.PING_HOST }} > "/tmp/${{ env.PING_OUTPUT }}"
 
-              OUTPUT="$(cat "/tmp/$PING_OUTPUT")"
+              OUTPUT="$(cat "/tmp/${{ env.PING_OUTPUT }}")"
 
-              PCT_LOSS="$(cat "/tmp/$PING_OUTPUT" | tail -n 2 | grep 'packet loss' | perl -pe 's/^.* ([0-9\.]+). packet loss.*$/$1/')"
+              PCT_LOSS="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep 'packet loss' | perl -pe 's/^.* ([0-9\.]+). packet loss.*$/$1/')"
               echo "::set-output name=ping_pct_loss::$PCT_LOSS"
 
-              AVG_RTT="$(cat "/tmp/$PING_OUTPUT" | tail -n 2 | grep 'round-trip' | awk -F'/' '{print $4}')"
+              AVG_RTT="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep 'round-trip' | awk -F'/' '{print $4}')"
               echo "::set-output name=ping_avg_rtt::$AVG_RTT"
             '
 
