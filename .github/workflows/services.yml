@@ -17,23 +17,15 @@ jobs:
         interface:
           - name: lan
             host: 192.168.1.41
-            port: 32400
-            scheme: http
             runs-on: [self-hosted, linux, hut]
           - name: vpn
             host: 100.77.217.17
-            port: 32400
-            scheme: http
             runs-on: [self-hosted, linux, vpn]
           - name: wan
             host: pumpkin.zalad.io
-            port: 32400
-            scheme: http
             runs-on: [ubuntu-latest]
           - name: argo
             host: plex.zervice.io
-            port: 443
-            scheme: https
             runs-on: [ubuntu-latest]
 
     outputs:
@@ -66,24 +58,26 @@ jobs:
       matrix:
         interface:
           - name: lan
+            scheme: http
             host: 192.168.1.41
             port: 32400
-            scheme: http
             runs-on: [self-hosted, linux, hut]
           - name: vpn
+            scheme: http
             host: 100.77.217.17
             port: 32400
-            scheme: http
             runs-on: [self-hosted, linux, vpn]
           - name: wan
+            scheme: http
             host: pumpkin.zalad.io
             port: 32400
-            scheme: http
+            path: /web/index.html
             runs-on: [ubuntu-latest]
           - name: argo
+            scheme: https
             host: plex.zervice.io
             port: 443
-            scheme: https
+            path: /web/index.html
             runs-on: [ubuntu-latest]
 
     outputs:
