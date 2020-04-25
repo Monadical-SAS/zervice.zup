@@ -1,0 +1,34 @@
+name: 'Ping'
+description: 'Ping a host, record the % packet loss and average RTT.'
+
+branding:
+  color: 'green'
+  icon: 'activity'
+
+inputs:
+  host:
+    description: 'The IP or hostname you want to ping'
+    required: true
+  path:
+    description: 'The file path to write the output to'
+    default: 'ping_output.txt'
+  count:
+    description: 'How many packets you want to send'
+    default: '5'
+  timeout:
+    description: 'The number of seconds to wait before timing out'
+    default: '5'
+  args:
+    description: 'Extra arguments to pass to the ping command'
+    default: ''
+      
+
+outputs:
+  ping_pct_loss:
+    description: 'Percent packet loss from 5 pings.'
+  ping_avg_rtt:
+    description: 'Average return trip time from 5 pings.'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

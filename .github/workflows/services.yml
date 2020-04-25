@@ -1,0 +1,102 @@
+name: 'zervice.plex'
+description: 'Plex, Radarr, Sonarr, Jackett, Transmission'
+
+on:
+  schedule:
+    - cron:  '*/2 * * * *'
+
+jobs:
+  ping:
+    runs-on: ${{ matrix.interface.runs-on }}
+    timeout-minutes: 2
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        interface:
+          - name: lan
+            host: 192.168.1.41
+            port: 32400
+            scheme: http
+            runs-on: [self-hosted, linux, hut]
+          - name: vpn
+            host: 100.77.217.17
+            port: 32400
+            scheme: http
+            runs-on: [self-hosted, linux, vpn]
+          - name: wan
+            host: hut.zalad.io
+            port: 32400
+            scheme: http
+            runs-on: [ubuntu-latest]
+          - name: argo
+            host: plex.zervice.io
+            port: 443
+            scheme: https
+            runs-on: [ubuntu-latest]
+
+    outputs:
+      ping_pct_loss: ${{ steps.ping.outputs.ping_pct_loss }}
+      ping_avg_rtt: ${{ steps.ping.outputs.ping_avg_rtt }}
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Ping check
+        id: ping
+        uses: ./.github/workflows/ping
+        with:
+          host: ${{ matrix.interface.host }}
+          path: ping_output.txt
+        
+      - name: Upload output
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ format('ping-{0}', matrix.interface.name) }}
+          path: ping_output.txt
+
+
+  http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        interface:
+          # - name: lan
+          #   host: 192.168.1.41
+          #   port: 32400
+          #   scheme: http
+          # - name: wan
+          #   host: hut.zalad.io
+          #   port: 32400
+          #   scheme: http
+          - name: vpn
+            host: 100.77.217.17
+            port: 32400
+            scheme: http
+          - name: argo
+            host: plex.zervice.io
+            port: 443
+            scheme: https
+
+    outputs:
+      http_code: ${{ steps.http.outputs.http_code }}
+      total_time: ${{ steps.http.outputs.total_time }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: HTTP check
+        id: http
+        uses: ./.github/workflows/http
+        with:
+          url: ${{ format('{0}://{1}:{2}{3}', matrix.interface.scheme, matrix.interface.host, matrix.interface.port, matrix.interface.path || '/') }}
+          stats_path: curl_stats.txt
+          
+      - name: Upload output
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ format('curl-{0}', matrix.interface.name) }}
+          path: curl_stats.txt

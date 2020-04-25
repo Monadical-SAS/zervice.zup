@@ -1,0 +1,34 @@
+name: 'HTTP'
+description: 'Use CURL to make a request to a host, and check the output.'
+
+branding:
+  color: 'green'
+  icon: 'chrome'
+
+inputs:
+  url:
+    description: 'The URL to make a request to'
+    required: true
+  stats_path:
+    description: 'The file path to write the stats output to'
+    default: 'stats_output.txt'
+  response_path:
+    description: 'The file path to write the response output to'
+    default: '/dev/null'
+  stats:
+    description: 'The CURL stats do you want to collect in --write-out format'
+    default: 'http_code: %{http_code}\ntime_connect: %{time_connect}\ntime_namelookup: %{time_namelookup}\ntime_pretransfer: %{time_pretransfer}\ntime_starttransfer: %{time_starttransfer}\ntime_redirect: %{time_redirect}\ntime_total: %{time_total}'
+  args:
+    description: 'Extra arguments to pass to the curl command'
+    default: '--location --insecure'
+      
+
+outputs:
+  http_code:
+    description: 'HTTP response code'
+  total_time:
+    description: 'Total HTTP request+response time in milliseconds'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
