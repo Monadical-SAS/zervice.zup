@@ -2,7 +2,7 @@ name: 'zervice.plex'
 
 on:
   schedule:
-    cron:  '*/2 * * * *'
+    - cron:  '*/2 * * * *'
   push:
     branches: [master]
 
