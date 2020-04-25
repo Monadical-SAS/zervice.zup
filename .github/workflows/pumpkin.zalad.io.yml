@@ -52,10 +52,10 @@ jobs:
 
               OUTPUT="$(cat "/tmp/${{ env.PING_OUTPUT }}")"
 
-              PCT_LOSS="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep 'packet loss' | perl -pe 's/^.* ([0-9\.]+). packet loss.*$/$1/')"
+              PCT_LOSS="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep "packet loss" | perl -pe \'s/^.* ([0-9\.]+). packet loss.*$/$1/\')"
               echo "::set-output name=ping_pct_loss::$PCT_LOSS"
 
-              AVG_RTT="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep 'round-trip' | awk -F'/' '{print $4}')"
+              AVG_RTT="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep "round-trip" | awk -F"/" \'{print $4}\')"
               echo "::set-output name=ping_avg_rtt::$AVG_RTT"
             '
 
