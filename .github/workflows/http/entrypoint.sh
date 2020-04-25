@@ -3,14 +3,15 @@
 # set -o errexit
 # set -o nounset
 # set -o pipefail
-# set -o xtrace
+set -o xtrace
+pwd
 
 curl --silent \
    --output "$INPUT_RESPONSE_PATH"  \
    --write-out "$INPUT_STATS" \
    $INPUT_ARGS "$INPUT_URL" > "$INPUT_STATS_PATH"
 
-# OUTPUT="$(cat "$INPUT_STATS_PATH")"
+OUTPUT="$(cat "$INPUT_STATS_PATH")"
 
 HTTP_CODE="$(cat "$INPUT_STATS_PATH" | grep http_code | awk '{print $2}')"
 echo "::set-output name=http_code::$HTTP_CODE"
