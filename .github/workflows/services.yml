@@ -43,7 +43,7 @@ jobs:
           path: ping_output.txt
 
       - name: Upload output to server
-        runs: |
+        run: |
           cat ping_output.txt
         
       - name: Upload output to GitHub
@@ -101,7 +101,7 @@ jobs:
           stats_path: curl_stats.txt
 
       - name: Upload output to server
-        runs: |
+        run: |
           cat curl_stats.txt
           
       - name: Upload output to GitHub
