@@ -55,7 +55,7 @@ jobs:
               PCT_LOSS="$(cat "${{ env.PING_OUTPUT }}" | tail -n 2 | grep "packet loss" | perl -pe \'s/^.* ([0-9\.]+). packet loss.*$/$1/\')"
               echo "::set-output name=ping_pct_loss::$PCT_LOSS"
 
-              AVG_RTT="$(cat "${{ env.PING_OUTPUT }}" | tail -n 2 | grep "round-trip" | awk -F"/" \'{print $5}\')"
+              AVG_RTT="$(cat "${{ env.PING_OUTPUT }}" | tail -n 2 | grep "avg" | awk -F"/" \'{print $5}\')"
               echo "::set-output name=ping_avg_rtt::$AVG_RTT"
             '
 
