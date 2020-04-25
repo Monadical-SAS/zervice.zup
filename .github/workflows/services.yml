@@ -40,13 +40,13 @@ jobs:
         uses: ./.github/workflows/ping
         with:
           host: ${{ matrix.interface.host }}
-          path: /github/workflow/ping_output.txt
+          path: /github/workspace/ping_output.txt
         
       - name: Upload output
         uses: actions/upload-artifact@v2-preview
         with:
           name: ${{ format('ping-{0}', matrix.interface.name) }}
-          path: /github/workflow/ping_output.txt
+          path: /github/workspace/ping_output.txt
 
 
   http:
@@ -94,10 +94,10 @@ jobs:
         uses: ./.github/workflows/http
         with:
           url: ${{ format('{0}://{1}:{2}{3}', matrix.interface.scheme, matrix.interface.host, matrix.interface.port, matrix.interface.path || '/') }}
-          stats_path: /github/workflow/curl_stats.txt
+          stats_path: /github/workspace/curl_stats.txt
           
       - name: Upload output
         uses: actions/upload-artifact@v2-preview
         with:
           name: ${{ format('curl-{0}', matrix.interface.name) }}
-          path: /github/workflow/curl_stats.txt
+          path: /github/workspace/curl_stats.txt
