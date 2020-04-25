@@ -58,7 +58,7 @@ jobs:
 
 
   http:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.interface.runs-on }}
     timeout-minutes: 2
     continue-on-error: true
     strategy:
@@ -69,18 +69,22 @@ jobs:
             host: 192.168.1.41
             port: 32400
             scheme: http
-          - name: wan
-            host: pumpkin.zalad.io
-            port: 32400
-            scheme: http
+            runs-on: [self-hosted, linux, hut]
           - name: vpn
             host: 100.77.217.17
             port: 32400
             scheme: http
+            runs-on: [self-hosted, linux, vpn]
+          - name: wan
+            host: pumpkin.zalad.io
+            port: 32400
+            scheme: http
+            runs-on: [ubuntu-latest]
           - name: argo
             host: plex.zervice.io
             port: 443
             scheme: https
+            runs-on: [ubuntu-latest]
 
     outputs:
       http_code: ${{ steps.http.outputs.http_code }}
