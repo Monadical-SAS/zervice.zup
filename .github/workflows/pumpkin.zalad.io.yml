@@ -50,7 +50,7 @@ jobs:
                   -t ${{ env.PING_TIMEOUT }} \
                   ${{ env.PING_HOST }} > "/tmp/${{ env.PING_OUTPUT }}"
 
-              OUTPUT="$(cat "/tmp/${{ env.PING_OUTPUT }}")"
+              cat "/tmp/${{ env.PING_OUTPUT }}"
 
               PCT_LOSS="$(cat "/tmp/${{ env.PING_OUTPUT }}" | tail -n 2 | grep "packet loss" | perl -pe \'s/^.* ([0-9\.]+). packet loss.*$/$1/\')"
               echo "::set-output name=ping_pct_loss::$PCT_LOSS"
