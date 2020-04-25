@@ -26,7 +26,7 @@ jobs:
             scheme: http
             runs-on: [self-hosted, linux, vpn]
           - name: wan
-            host: hut.zalad.io
+            host: pumpkin.zalad.io
             port: 32400
             scheme: http
             runs-on: [ubuntu-latest]
@@ -65,14 +65,14 @@ jobs:
       fail-fast: false
       matrix:
         interface:
-          # - name: lan
-          #   host: 192.168.1.41
-          #   port: 32400
-          #   scheme: http
-          # - name: wan
-          #   host: hut.zalad.io
-          #   port: 32400
-          #   scheme: http
+          - name: lan
+            host: 192.168.1.41
+            port: 32400
+            scheme: http
+          - name: wan
+            host: pumpkin.zalad.io
+            port: 32400
+            scheme: http
           - name: vpn
             host: 100.77.217.17
             port: 32400
