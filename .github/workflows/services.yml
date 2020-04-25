@@ -51,7 +51,7 @@ jobs:
           path: ping_output.txt
         
       - name: Upload output
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2-preview
         with:
           name: ${{ format('ping-{0}', matrix.interface.name) }}
           path: ping_output.txt
@@ -101,7 +101,7 @@ jobs:
           stats_path: curl_stats.txt
           
       - name: Upload output
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2-preview
         with:
           name: ${{ format('curl-{0}', matrix.interface.name) }}
           path: curl_stats.txt
