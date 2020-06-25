@@ -93,3 +93,9 @@ timeout: 5s
             check_ssh.log
             ...
 ```
+
+See more:
+
+- https://github.com/francescou/docker-compose-ui
+- https://cockpit-project.org/
+- https://doxfer.webmin.com/Webmin/System_and_Server_Status
